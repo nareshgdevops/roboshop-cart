@@ -5,5 +5,7 @@ on:
     branches:
       - 'main'
 jobs:
-  Reuse:
+  Build:
     uses: nareshgdevops/roboshop-github-actions/.github/workflows/CI-reusable.yml@main
+    with:
+      appType: nodejs
