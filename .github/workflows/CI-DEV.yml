@@ -5,3 +5,5 @@ on:
 jobs:
   Reuse:
     uses: nareshgdevops/roboshop-github-actions/.github/workflows/CI-DEV.yml@main
+    with:
+      appType: nodejs
