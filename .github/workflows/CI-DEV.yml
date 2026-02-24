@@ -1,0 +1,7 @@
+name: CI - DEV
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  Reuse:
+    uses: nareshgdevops/roboshop-github-actions/.github/workflows/CI-DEV.yml@main

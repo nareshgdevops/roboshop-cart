@@ -1,0 +1,9 @@
+name: CI/CD - MAIN
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+jobs:
+  Reuse:
+    uses: nareshgdevops/roboshop-github-actions/.github/workflows/CI-reusable.yml@main
