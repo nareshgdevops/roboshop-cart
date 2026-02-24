@@ -6,4 +6,4 @@ jobs:
   Build:
     uses: nareshgdevops/roboshop-github-actions/.github/workflows/CI-DEV.yml@main
     with:
-      appType: nodejs1
+      appType: nodejs
