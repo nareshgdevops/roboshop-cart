@@ -1,7 +1,8 @@
 name: CI - DEV
 on:
   push:
-  workflow_dispatch:
+    branches:
+      - 'ROBO-**'
 jobs:
   Build:
     uses: nareshgdevops/roboshop-github-actions/.github/workflows/CI-DEV.yml@main
