@@ -6,6 +6,6 @@ on:
       - 'main'
 jobs:
   Build:
-    uses: nareshgdevops/roboshop-github-actions/.github/workflows/CI-reusable.yml@main
+    uses: nareshgdevops/roboshop-github-actions/.github/workflows/CI-main.yml@main
     with:
       appType: nodejs
