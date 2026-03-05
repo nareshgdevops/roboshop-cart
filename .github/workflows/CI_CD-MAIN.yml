@@ -12,4 +12,4 @@ jobs:
       appName: cart
     secrets:
 #      VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
-      VAULT_TOKEN: "test"
+      VAULT_TOKEN: test
