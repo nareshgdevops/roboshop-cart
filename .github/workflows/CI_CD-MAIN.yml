@@ -8,8 +8,8 @@ jobs:
   Build:
     uses: nareshgdevops/roboshop-github-actions/.github/workflows/CI-main.yml@main
     with:
-      appType: nodejs
-      appName: cart
+      appType: 'nodejs'
+      appName: 'cart'
     secrets:
       VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
 
