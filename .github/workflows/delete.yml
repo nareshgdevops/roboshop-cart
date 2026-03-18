@@ -1,0 +1,12 @@
+name: Deploy
+on:
+  workflow_dispatch
+jobs:
+  Deploy:
+    uses: nareshgdevops/roboshop-github-actions/.github/workflows/aks-delete.yml@main
+    with:
+      appName: 'cart'
+      appEnv: 'dev'
+      resourceGroup: 'ukwest-dev'
+    secrets:
+      VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
