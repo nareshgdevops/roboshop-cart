@@ -2,31 +2,39 @@ pipeline {
     agent any
 
     stages {
-        stage('Build app dependencies') {
+        stage('NodeJS Build app dependencies') {
             when {
                 expression { env.APP_TYPE == 'nodejs' }
             }
             steps {
                 sh 'npm install'
             }
+        }
+        stage('Maven Build app dependencies') {
             when {
                 expression { env.APP_TYPE == 'maven' }
             }
             steps {
                 sh 'mvn package'
             }
+        }
+        stage('Python Build app dependencies') {
             when {
                 expression { env.APP_TYPE == 'python' }
             }
             steps {
                 sh 'echo python package'
             }
+        }
+        stage('Go lang Build app dependencies') {
             when {
                 expression { env.APP_TYPE == 'golang' }
             }
             steps {
                 sh 'go build'
             }
+        }
+        stage('Angular Build app dependencies') {
             when {
                 expression { env.APP_TYPE == 'angular' }
             }
@@ -34,7 +42,6 @@ pipeline {
                 sh 'echo angular build'
             }
         }
-
         stage('Sonar Qube Scan') {
             when {
                 expression { env.APP_TYPE != 'python' }
