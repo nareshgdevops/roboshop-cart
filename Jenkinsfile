@@ -2,6 +2,12 @@ pipeline {
     agent any
 
     stages {
+        stage('Test') {
+            steps {
+                sh 'echo APP_TYPE=$APP_TYPE'
+                sh 'echo APP_TYPE=$APP_NAME'
+            }
+        }
         stage('NodeJS Build app dependencies') {
             when {
                 expression { env.APP_TYPE == 'nodejs' }
