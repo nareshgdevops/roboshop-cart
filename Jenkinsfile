@@ -59,26 +59,28 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                def secrets = [
-                    [path: 'roboshop-infra/data/azure-service-priniciple', engineVersion: 1, secretValues: [
-                        [envVar: 'AZURE_SUBSCRIPTION_ID', vaultKey: 'AZURE_SUBSCRIPTION_ID'],
-                        [envVar: 'AZURE_CLIENT_ID', vaultKey: 'AZURE_CLIENT_ID'],
-                        [envVar: 'AZURE_SECRET', vaultKey: 'AZURE_SECRET'],
-                        [envVar: 'AZURE_TENANT', vaultKey: 'AZURE_TENANT']]],
-                    [path: 'roboshop-infra/data/sonarqube', engineVersion: 2, secretValues: [
-                        [envVar: 'SONAR_TOKEN', vaultKey: 'sonar_token']]]
-                ]
-                // inside this block your credentials will be available as env variables
-                withVault([vaultSecrets: secrets]) {
-                    sh 'echo AZURE_SUBSCRIPTION_ID'
-                    sh 'echo AZURE_CLIENT_ID'
-                    sh 'echo AZURE_SECRET'
-                    sh 'echo AZURE_TENANT'
-                    sh 'SONAR_TOKEN'
-                    sh "az login --service-principal --username $AZURE_CLIENT_ID --password $AZURE_SECRET --tenant $AZURE_TENANT"
-                    sh 'az acr login --name nareshgdevops'
-                    sh 'docker build -t nareshgdevops.azurecr.io/roboshop-$APP_NAME:$BUILD_NUMBER .'
-                    echo 'trivy image nareshgdevops.azurecr.io/roboshop-${env.APP_NAME}:${{ github.sha }} --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1'
+                script {
+                    def secrets = [
+                        [path: 'roboshop-infra/data/azure-service-priniciple', engineVersion: 1, secretValues: [
+                            [envVar: 'AZURE_SUBSCRIPTION_ID', vaultKey: 'AZURE_SUBSCRIPTION_ID'],
+                            [envVar: 'AZURE_CLIENT_ID', vaultKey: 'AZURE_CLIENT_ID'],
+                            [envVar: 'AZURE_SECRET', vaultKey: 'AZURE_SECRET'],
+                            [envVar: 'AZURE_TENANT', vaultKey: 'AZURE_TENANT']]],
+                        [path: 'roboshop-infra/data/sonarqube', engineVersion: 2, secretValues: [
+                            [envVar: 'SONAR_TOKEN', vaultKey: 'sonar_token']]]
+                    ]
+                    // inside this block your credentials will be available as env variables
+                    withVault([vaultSecrets: secrets]) {
+                        sh 'echo AZURE_SUBSCRIPTION_ID'
+                        sh 'echo AZURE_CLIENT_ID'
+                        sh 'echo AZURE_SECRET'
+                        sh 'echo AZURE_TENANT'
+                        sh 'SONAR_TOKEN'
+                        sh "az login --service-principal --username $AZURE_CLIENT_ID --password $AZURE_SECRET --tenant $AZURE_TENANT"
+                        sh 'az acr login --name nareshgdevops'
+                        sh 'docker build -t nareshgdevops.azurecr.io/roboshop-$APP_NAME:$BUILD_NUMBER .'
+                        echo 'trivy image nareshgdevops.azurecr.io/roboshop-${env.APP_NAME}:${{ github.sha }} --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1'
+                    }
                 }
             }
         }
