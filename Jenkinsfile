@@ -61,7 +61,7 @@ pipeline {
             steps {
                 script {
                     def secrets = [
-                        [path: 'roboshop-infra/data/azure-service-priniciple', engineVersion: 1, secretValues: [
+                        [path: 'roboshop-infra/data/azure-service-priniciple', engineVersion: 2, secretValues: [
                             [envVar: 'AZURE_SUBSCRIPTION_ID', vaultKey: 'AZURE_SUBSCRIPTION_ID'],
                             [envVar: 'AZURE_CLIENT_ID', vaultKey: 'AZURE_CLIENT_ID'],
                             [envVar: 'AZURE_SECRET', vaultKey: 'AZURE_SECRET'],
@@ -71,15 +71,17 @@ pipeline {
                     ]
                     // inside this block your credentials will be available as env variables
                     withVault([vaultSecrets: secrets]) {
-                        sh 'echo AZURE_SUBSCRIPTION_ID'
-                        sh 'echo AZURE_CLIENT_ID'
-                        sh 'echo AZURE_SECRET'
-                        sh 'echo AZURE_TENANT'
-                        sh 'SONAR_TOKEN'
-                        sh "az login --service-principal --username $AZURE_CLIENT_ID --password $AZURE_SECRET --tenant $AZURE_TENANT"
-                        sh 'az acr login --name nareshgdevops'
-                        sh 'docker build -t nareshgdevops.azurecr.io/roboshop-$APP_NAME:$BUILD_NUMBER .'
-                        echo 'trivy image nareshgdevops.azurecr.io/roboshop-$APP_NAME:$BUILD_NUMBER --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1'
+                        sh '''
+                            echo $AZURE_SUBSCRIPTION_ID'
+                            echo $AZURE_CLIENT_ID'
+                            echo $AZURE_SECRET'
+                            echo $AZURE_TENANT'
+                            echo $SONAR_TOKEN'
+                            az login --service-principal --username $AZURE_CLIENT_ID --password $AZURE_SECRET --tenant $AZURE_TENANT
+                            az acr login --name nareshgdevops'
+                            docker build -t nareshgdevops.azurecr.io/roboshop-$APP_NAME:$BUILD_NUMBER .'
+                            echo 'trivy image nareshgdevops.azurecr.io/roboshop-$APP_NAME:$BUILD_NUMBER --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1'
+                        '''
                     }
                 }
             }
@@ -87,9 +89,11 @@ pipeline {
 
         stage('Docker Push') {
             steps {
-                sh "az login --service-principal --username $AZURE_CLIENT_ID --password $AZURE_SECRET --tenant $AZURE_TENANT"
-                sh 'az acr login --name nareshgdevops'
-                sh 'docker push nareshgdevops.azurecr.io/roboshop-$APP_NAME:$BUILD_NUMBER'
+                sh '''
+                    az login --service-principal --username $AZURE_CLIENT_ID --password $AZURE_SECRET --tenant $AZURE_TENANT
+                    az acr login --name nareshgdevops'
+                    docker push nareshgdevops.azurecr.io/roboshop-$APP_NAME:$BUILD_NUMBER
+                '''
             }
         }
     }
