@@ -75,7 +75,9 @@ pipeline {
                                 [envVar: 'AZURE_CLIENT_ID', vaultKey: 'AZURE_CLIENT_ID'],
                                 [envVar: 'AZURE_SECRET',    vaultKey: 'AZURE_SECRET'],
                                 [envVar: 'AZURE_TENANT',    vaultKey: 'AZURE_TENANT']
-                            ],
+                            ]
+                        ],
+                        [
                             path: 'roboshop-infra/sonarqube',
                             engineVersion: 2,
                             secretValues: [
