@@ -4,7 +4,8 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                sh 'env.'
+                sh 'echo APP_TYPE=$APP_TYPE'
+                sh 'echo APP_TYPE=$APP_NAME'
             }
         }
         stage('NodeJS Build app dependencies') {
