@@ -61,12 +61,12 @@ pipeline {
             steps {
                 script {
                     def secrets = [
-                        [path: 'roboshop-infra/data/azure-service-priniciple', engineVersion: 2, secretValues: [
+                        [path: 'roboshop-infra/azure-service-priniciple', engineVersion: 2, secretValues: [
                             [envVar: 'AZURE_SUBSCRIPTION_ID', vaultKey: 'AZURE_SUBSCRIPTION_ID'],
                             [envVar: 'AZURE_CLIENT_ID', vaultKey: 'AZURE_CLIENT_ID'],
                             [envVar: 'AZURE_SECRET', vaultKey: 'AZURE_SECRET'],
                             [envVar: 'AZURE_TENANT', vaultKey: 'AZURE_TENANT']]],
-                        [path: 'roboshop-infra/data/sonarqube', engineVersion: 2, secretValues: [
+                        [path: 'roboshop-infra/sonarqube', engineVersion: 2, secretValues: [
                             [envVar: 'SONAR_TOKEN', vaultKey: 'sonar_token']]]
                     ]
                     // inside this block your credentials will be available as env variables
