@@ -59,12 +59,6 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh 'echo cx scan create -s . --project-name roboshop-${{ inputs.appName }} --scan-types sast'
-            }
-        }
-
-        stage('Docker Build') {
-            steps {
                 def secrets = [
                     [path: 'roboshop-infra/data/azure-service-priniciple', engineVersion: 1, secretValues: [
                         [envVar: 'AZURE_SUBSCRIPTION_ID', vaultKey: 'AZURE_SUBSCRIPTION_ID'],
