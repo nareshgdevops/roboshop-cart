@@ -47,13 +47,13 @@ pipeline {
                 expression { env.APP_TYPE != 'python' }
             }
             steps {
-                sh 'echo /home/github/sonar-scanner-7.3.0.5189-linux-x64/bin/sonar-scanner -Dsonar.host.url=http://sonarqube.nareshdevops1218.online:9000 -Dsonar.token=$SONAR_TOKEN -Dsonar.projectKey=roboshop-${env.appName}'
+                sh 'echo /home/github/sonar-scanner-7.3.0.5189-linux-x64/bin/sonar-scanner -Dsonar.host.url=http://sonarqube.nareshdevops1218.online:9000 -Dsonar.token=$SONAR_TOKEN -Dsonar.projectKey=roboshop-$APP_NAME'
             }
         }
 
         stage('CheckMarx SAST Scan') {
             steps {
-                sh 'echo cx scan create -s . --project-name roboshop-${{ inputs.appName }} --scan-types sast'
+                sh 'echo cx scan create -s . --project-name roboshop-$APP_NAME --scan-types sast'
             }
         }
 
@@ -79,7 +79,7 @@ pipeline {
                         sh "az login --service-principal --username $AZURE_CLIENT_ID --password $AZURE_SECRET --tenant $AZURE_TENANT"
                         sh 'az acr login --name nareshgdevops'
                         sh 'docker build -t nareshgdevops.azurecr.io/roboshop-$APP_NAME:$BUILD_NUMBER .'
-                        echo 'trivy image nareshgdevops.azurecr.io/roboshop-${env.APP_NAME}:${{ github.sha }} --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1'
+                        echo 'trivy image nareshgdevops.azurecr.io/roboshop-$APP_NAME:$BUILD_NUMBER --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1'
                     }
                 }
             }
