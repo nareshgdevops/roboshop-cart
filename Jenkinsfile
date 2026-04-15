@@ -63,33 +63,49 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
+        stage('Fetch Secrets') {
             steps {
                 script {
                     def secrets = [
-                        [path: 'roboshop-infra/azure-service-priniciple', engineVersion: 2, secretValues: [
-                            [envVar: 'AZURE_SUBSCRIPTION_ID', vaultKey: 'AZURE_SUBSCRIPTION_ID'],
-                            [envVar: 'AZURE_CLIENT_ID', vaultKey: 'AZURE_CLIENT_ID'],
-                            [envVar: 'AZURE_SECRET', vaultKey: 'AZURE_SECRET'],
-                            [envVar: 'AZURE_TENANT', vaultKey: 'AZURE_TENANT']]],
-                        [path: 'roboshop-infra/sonarqube', engineVersion: 2, secretValues: [
-                            [envVar: 'SONAR_TOKEN', vaultKey: 'sonar_token']]]
+                        [
+                            path: 'roboshop-infra/azure-service-priniciple',
+                            engineVersion: 2,
+                            secretValues: [
+                                [envVar: 'AZURE_SUBSCRIPTION_ID', vaultKey: 'AZURE_SUBSCRIPTION_ID'],
+                                [envVar: 'AZURE_CLIENT_ID', vaultKey: 'AZURE_CLIENT_ID'],
+                                [envVar: 'AZURE_SECRET',    vaultKey: 'AZURE_SECRET'],
+                                [envVar: 'AZURE_TENANT',    vaultKey: 'AZURE_TENANT']
+                            ]
+                            path: 'roboshop-infra/sonarqube',
+                            engineVersion: 2,
+                            secretValues: [
+                                [envVar: 'SONAR_TOKEN', vaultKey: 'sonar_token']
+                            ]
+                        ]
                     ]
-                    // inside this block your credentials will be available as env variables
+
                     withVault([vaultSecrets: secrets]) {
-                        sh '''
-                            echo $AZURE_SUBSCRIPTION_ID'
-                            echo $AZURE_CLIENT_ID'
-                            echo $AZURE_SECRET'
-                            echo $AZURE_TENANT'
-                            echo $SONAR_TOKEN'
-                            az login --service-principal --username $AZURE_CLIENT_ID --password $AZURE_SECRET --tenant $AZURE_TENANT
-                            az acr login --name nareshgdevops'
-                            docker build -t nareshgdevops.azurecr.io/roboshop-$APP_NAME:$BUILD_NUMBER .
-                            echo trivy image nareshgdevops.azurecr.io/roboshop-$APP_NAME:$BUILD_NUMBER --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1
-                        '''
+                        env.AZURE_SUBSCRIPTION_ID = AZURE_SUBSCRIPTION_ID
+                        env.AZURE_CLIENT_ID = AZURE_CLIENT_ID
+                        env.AZURE_SECRET    = AZURE_SECRET
+                        env.AZURE_TENANT    = AZURE_TENANT
                     }
                 }
+            }
+        }
+        stage('Docker Build') {
+            steps {
+                   sh '''
+                        echo $AZURE_SUBSCRIPTION_ID'
+                        echo $AZURE_CLIENT_ID'
+                        echo $AZURE_SECRET'
+                        echo $AZURE_TENANT'
+                        echo $SONAR_TOKEN'
+                        az login --service-principal --username $AZURE_CLIENT_ID --password $AZURE_SECRET --tenant $AZURE_TENANT
+                        az acr login --name nareshgdevops'
+                        docker build -t nareshgdevops.azurecr.io/roboshop-$APP_NAME:$BUILD_NUMBER .
+                        echo trivy image nareshgdevops.azurecr.io/roboshop-$APP_NAME:$BUILD_NUMBER --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1
+                    '''
             }
         }
 
@@ -97,7 +113,7 @@ pipeline {
             steps {
                 sh '''
                     az login --service-principal --username $AZURE_CLIENT_ID --password $AZURE_SECRET --tenant $AZURE_TENANT
-                    az acr login --name nareshgdevops'
+                    az acr login --name nareshgdevops
                     docker push nareshgdevops.azurecr.io/roboshop-$APP_NAME:$BUILD_NUMBER
                 '''
             }
